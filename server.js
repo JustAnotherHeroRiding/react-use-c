@@ -11,12 +11,12 @@ const port = process.env.PORT ?? 3000;
 app.use(express.static("dist"));
 app.use(express.json());
 
-const zigPath = "node_modules/@oven/zig/zig";
+const zigPath = path.resolve(__dirname, "node_modules/@oven/zig/zig");
 
 function spawn(command, args) {
   return new Promise((resolve) => {
     // damn this api is shit
-    const p = childProcess.spawn(command, args);
+    const p = childProcess.spawn(command, args, { shell: true });
     const stdouts = [];
     const stderrs = [];
 
@@ -54,6 +54,14 @@ async function runC(code) {
   await fsPromises.writeFile(cFile, decodeURIComponent(code));
   await spawn(zigPath, ["cc", cFile, "-o", outFile]);
   const out = await spawn(outFile, []);
+  // Here seems to be the problem as I am getting the following error
+ /*  {
+    code: 1,
+    stdout: '',
+    stderr: "'C:\\Users\\Admin\\AppData\\Local\\Temp\\use-c6wtGK8\\main' is not recognized as an internal or external command,\r\n" +
+      'operable program or batch file.\r\n'
+  } */
+  console.log(out);
   return out;
 }
 

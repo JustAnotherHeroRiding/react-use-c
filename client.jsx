@@ -55,6 +55,7 @@ const Demo = () => {
     }
   };
   const onClick = async () => {
+    //console.log("Run btn clicked")
     const out = await cHelloWorld();
     setOutput(out.stdout);
   };
